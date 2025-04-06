@@ -5,7 +5,12 @@ const OpenAI = require('openai'); // Importación cambiada
 const app = express();
 
 // Configura CORS para permitir solo tu dominio frontend
-const allowedOrigins = ['https://bpmn-irm.infy.uk']; //URL real
+const allowedOrigins = [
+  'https://bpmn-irm.infy.uk',
+  'https://bpmn-imr.onrender.com', 
+  'http://localhost:3000', //URL local para pruebas
+]; 
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
