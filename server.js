@@ -1,5 +1,5 @@
 // server.js - Backend para generación de BPMN con OpenAI
-require('dotenv').config(); // Solo necesario para desarrollo local
+//require('dotenv').config(); // Solo necesario para desarrollo local
 const express = require('express');
 const cors = require('cors');
 const { Configuration, OpenAIApi } = require('openai');
@@ -10,7 +10,7 @@ const app = express();
 // Configuración detallada de CORS
 app.use(cors({
   origin: [
-    'https://tusuario.epizy.com', // Reemplaza con tu dominio en InfinityFree
+    'http://bpmn-irm.infy.uk', // Reemplaza con tu dominio en InfinityFree
     'http://localhost:3000'       // Para desarrollo local
   ],
   methods: ['GET', 'POST'],
@@ -22,7 +22,7 @@ app.use(express.json());
 
 // Configuración de OpenAI
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY || 'sk-default-local-key' // Usa variable de entorno o clave local para pruebas
+  apiKey: process.env.OPENAI_API_KEY || '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' // Usa variable de entorno o clave local para pruebas
 });
 const openai = new OpenAIApi(configuration);
 
