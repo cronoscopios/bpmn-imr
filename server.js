@@ -3,8 +3,12 @@ const cors = require('cors');
 const app = express();
 
 // Configura CORS para permitir llamadas desde cualquier dominio (útil para desarrollo)
-app.use(cors());
-res.header('Access-Control-Allow-Origin', '*');
+// Configuración detallada de CORS (permite solo tu frontend de InfinityFree)
+app.use(cors({
+  origin: 'https://bpmn-irm.infy.uk', // Reemplaza con tu URL real
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 
 // Simula la generación de BPMN a partir de un prompt (¡usa tu lógica real aquí!)
 app.get('/generate-bpmn', (req, res) => {
