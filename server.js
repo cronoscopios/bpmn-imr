@@ -7,8 +7,15 @@ app.use(cors());
 
 // Configuración OpenAI (v4+)
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY // Asegúrate de tener esta variable en Render
+  apiKey: process.env.OPENAI_API_KEY // variable en Render
 });
+
+// 3. Middlewares y rutas
+app.use(express.json());
+
+//Aquí van las rutas de health check 
+app.get('/', (req, res) => res.send('OK'));  // Ruta raíz
+app.get('/health', (req, res) => res.send('OK'));  // Ruta alternativa
 
 // Ruta para generar BPMN
 app.get('/generate-bpmn', async (req, res) => {
@@ -42,9 +49,6 @@ app.get('/generate-bpmn', async (req, res) => {
     res.status(500).json({ error: "Fallo al generar BPMN" });
   }
 });
-
-// Health check para Render
-app.get('/health', (req, res) => res.send('OK'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
