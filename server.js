@@ -3,7 +3,20 @@ const cors = require('cors');
 const OpenAI = require('openai'); // Importación cambiada
 
 const app = express();
-app.use(cors());
+
+// Configura CORS para permitir solo tu dominio frontend
+const allowedOrigins = ['https://bpmn-irm.infy.uk']; //URL real
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Dominio no permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST'], // Métodos permitidos
+  credentials: true // cookies o autenticación
+}));
 
 // Configuración OpenAI (v4+)
 const openai = new OpenAI({
