@@ -4,6 +4,7 @@ const app = express();
 
 // Configura CORS para permitir llamadas desde cualquier dominio (útil para desarrollo)
 app.use(cors());
+res.header('Access-Control-Allow-Origin', '*');
 
 // Simula la generación de BPMN a partir de un prompt (¡usa tu lógica real aquí!)
 app.get('/generate-bpmn', (req, res) => {
