@@ -1,35 +1,94 @@
+// server.js - Backend para generación de BPMN con OpenAI
+require('dotenv').config(); // Solo necesario para desarrollo local
 const express = require('express');
 const cors = require('cors');
+const { Configuration, OpenAIApi } = require('openai');
+
+// Configuración de Express
 const app = express();
 
-// Configura CORS para permitir llamadas desde cualquier dominio (útil para desarrollo)
-// Configuración detallada de CORS (permite solo tu frontend de InfinityFree)
+// Configuración detallada de CORS
 app.use(cors({
-  origin: 'https://bpmn-irm.infy.uk', // Reemplaza con tu URL real
+  origin: [
+    'https://tusuario.epizy.com', // Reemplaza con tu dominio en InfinityFree
+    'http://localhost:3000'       // Para desarrollo local
+  ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
 
-// Simula la generación de BPMN a partir de un prompt (¡usa tu lógica real aquí!)
-app.get('/generate-bpmn', (req, res) => {
-  const prompt = req.query.prompt || '';
+// Middleware para parsear JSON
+app.use(express.json());
 
-  // Ejemplo: Genera un BPMN muy básico basado en el prompt
-  const bpmnXML = `
-    <?xml version="1.0" encoding="UTF-8"?>
-    <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL">
-      <bpmn:process id="Process_1" name="${prompt}">
-        <bpmn:startEvent id="StartEvent_1" />
-        <bpmn:task id="Task_1" name="Tarea: ${prompt}" />
-        <bpmn:endEvent id="EndEvent_1" />
-      </bpmn:process>
-    </bpmn:definitions>
-  `;
+// Configuración de OpenAI
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY || 'sk-default-local-key' // Usa variable de entorno o clave local para pruebas
+});
+const openai = new OpenAIApi(configuration);
 
-  res.json({ bpmnXML });
+// Ruta para generar BPMN
+app.get('/generate-bpmn', async (req, res) => {
+  const prompt = req.query.prompt;
+  
+  if (!prompt) {
+    return res.status(400).json({ error: 'El parámetro "prompt" es requerido' });
+  }
+
+  try {
+    // Instrucción detallada para OpenAI
+    const instruction = `
+      Genera un diagrama BPMN en formato XML para el siguiente proceso: ${prompt}.
+      Incluye al menos:
+      1. Un startEvent
+      2. Tres tareas principales
+      3. Un gateway de decisión
+      4. Un endEvent
+      Usa el estándar BPMN 2.0.
+    `;
+
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { 
+          role: "system", 
+          content: "Eres un experto en BPMN que genera XML válido para bpmn-js." 
+        },
+        { 
+          role: "user", 
+          content: instruction 
+        }
+      ],
+      temperature: 0.7
+    });
+
+    const bpmnXML = completion.data.choices[0].message.content;
+    
+    // Limpieza del XML (por si OpenAI agrega texto adicional)
+    const cleanXML = bpmnXML.replace(/```xml/g, '').replace(/```/g, '').trim();
+    
+    res.json({ bpmnXML: cleanXML });
+  } catch (error) {
+    console.error("Error con OpenAI:", error.response?.data || error.message);
+    res.status(500).json({ 
+      error: "Error al generar el BPMN",
+      details: error.response?.data || error.message
+    });
+  }
 });
 
+// Ruta de prueba
+app.get('/', (req, res) => {
+  res.send('API de Generación BPMN - Usa /generate-bpmn?prompt=TU_TEXTO');
+});
+
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Error interno del servidor');
+});
+
+// Puerto (Render usa process.env.PORT)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`API running on http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
