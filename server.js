@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'http://tudominio.infy.uk' }));
+app.use(cors({ origin: 'https://bpmn-irm.infy.uk' }));
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY; //variables de entorno
 
