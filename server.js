@@ -20,7 +20,7 @@ app.use(cors({
     }
   },
   methods: ['GET', 'POST'], // Métodos permitidos
-  credentials: true // cookies o autenticación
+  credentials: false // cookies o autenticación
 }));
 
 // Configuración OpenAI (v4+)
