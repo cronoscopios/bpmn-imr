@@ -3,8 +3,12 @@ const cors = require('cors');
 const axios = require('axios'); // Para llamar a la API de DeepSeek
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+
+app.use(cors({
+  origin: 'https://bpmn-irm.infy.uk', // dominio real
+  methods: ['GET', 'POST'] // Permite POST
+}));
 
 // API Key de DeepSeek (gratuita)
 const DEEPSEEK_API_KEY = 'sk-9040e92446804571a2dc9b557a487da7'; 
