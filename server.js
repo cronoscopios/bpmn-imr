@@ -9,7 +9,7 @@ app.use(cors({ origin: 'https://bpmn-irm.infy.uk' }));
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY; //variables de entorno
 
-app.post('/generate-bpmn', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
     const { prompt } = req.body;
     if (!prompt) throw new Error('Prompt no proporcionado');
