@@ -7,6 +7,8 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: 'https://bpmn-irm.infy.uk' }));
 
+const port = process.env.PORT || 4000;
+
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY; //variables de entorno
 
 app.post('/', async (req, res) => {
